@@ -15,49 +15,48 @@
 
 <body>
 
-<h1>Last Artist Standing</h1>
-
-<hr>
-
+<div style="margin-left:5px;">
 <?php
 
 require "variables.php";
 
-$conn = new mysqli($servername, $username, $password);
+$conn = new mysqli($servername, $username, $password, $dbname);
 
-if(!$conn->select_db($dbname)){
-    $sql = "CREATE DATABASE {$dbname}";
-	if ($conn->query($sql) === TRUE) {
-		$conn->select_db($dbname);
-	    $sql = "CREATE TABLE {$tablename} (
-		id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY, 
-		username VARCHAR(30) NOT NULL,
-		imagesource VARCHAR(100) NOT NULL,
-		tags VARCHAR(100),
-		day DATE,
-		strike INT(6) UNSIGNED
-		)";
-		if ($conn->query($sql) === TRUE) {
-		} else {
-		    echo "Error creating table: " . $conn->error;
-		}
-	} else {
-	    echo "Error creating database: " . $conn->error;
-	}
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
 }
 
-echo "<a class='btn btn-info' role='button' href='{$base_url}submit.php'>Submit your artwork</a>";
-echo "<br><br>";
-echo "<a class='btn btn-info' role='button' href='{$base_url}gallery.php'>Gallery</a>";
+$result = $conn->query("SHOW TABLES LIKE '{$tablename}'");
+if ($result->num_rows == 0) {
+    $sql = "CREATE TABLE {$tablename} (
+	id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY, 
+	username VARCHAR(30) NOT NULL,
+	imagesource VARCHAR(200) NOT NULL,
+	tags VARCHAR(100),
+	day DATE,
+	strike INT(6) UNSIGNED
+	)";
+	if ($conn->query($sql) === FALSE) {
+	    echo "Error creating table: " . $conn->error;
+	}
+}
 ?>
+
+<h1>Last Artist Standing 2.0</h1>
+
+<hr>
+
+<a class='btn btn-info' role='button' href='<?php echo"{$base_url}submit.php"?>'>Submit your artwork</a>
+<br><br>
+<a class='btn btn-info' role='button' href='<?php echo"{$base_url}gallery.php"?>'>Submissions</a>
+<br><br>
+<a href='<?php echo"{$base_url}raw.php"?>' target="_blank">Raw Database Data</a>
 
 <hr>
 
 <p>Visit github repository page for more info:</p>
 
 <a href="https://github.com/las-admin/las" target="_blank">https://github.com/las-admin/las</a>
-
-<hr>
-
+</div>
 </body>
 </html>

@@ -15,16 +15,64 @@
 
 <body>
 
-<h1>Gallery</h1>
+<?php require"variables.php";?>
 
+<h1>
+	<a href="<?php echo $base_url ?>">
+		<span class="glyphicon glyphicon-circle-arrow-left"></span></a>
+Submissions
+</h1>
 
-<hr>
+<?php
 
-<p>Visit github repository page for more info:</p>
+//stylised containers
+$containerstart = ' <div class="container-fluid">';
+$rowstart='  <div class="panel-body row" style="width:100%">';
+function imagebox($username, $imagesource, $tags) {
+	return "    <div class='col-sm-4'>
+      <div class='panel panel-default'>
+        <div class='panel-heading'><h3 class='panel-title'>{$username}</h3></div>
+        <img src='{$imagesource}' class='img-responsive' style='width:100%' alt='{$imagesource}'>
+        <div class='panel-footer'>{$tags}</div>
+      </div>
+    </div>";
+}
+//stylised containers
 
-<a href="https://github.com/las-admin/las" target="_blank">https://github.com/las-admin/las</a>
+//connection
+$conn = new mysqli($servername, $username, $password, $dbname);
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+//connection
 
-<hr>
+$sql = "SELECT username, imagesource, tags, day, strike FROM {$tablename}";
+$result = $conn->query($sql);
+
+echo "<div class='panel panel-default'>
+<div class='panel-heading'><h3 class='panel-title'>".date("Y/m/d")."</h3></div>
+";
+echo $containerstart;
+if ($result->num_rows > 0) {
+	$i=0;
+	echo $rowstart;
+    while($row = $result->fetch_assoc()) {
+        echo imagebox($row["username"], $row["imagesource"], $row["tags"]);
+        $i++;
+        if($i%3==0 && $i!=$result->num_rows){
+        	//close the previous row and start a new one.
+        	echo '</div>';
+        	echo $rowstart;
+        }
+    }
+    echo '</div>';
+} else {
+    echo "No images yet.";
+}
+echo '</div>';
+echo '</div>';
+
+?>
 
 </body>
 </html>

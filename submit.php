@@ -51,10 +51,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 //post
 ?>
-<div class="panel panel-default col-sm-3">
+<div class="panel panel-default col-sm-3" style="margin-left:5px; margin-top:5px">
 <div class="panel-body">
 <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="post">
-    <h2>Submit your artwork</h2>
+    <h2>
+      <a href="<?php echo $base_url ?>">
+        <span class="glyphicon glyphicon-circle-arrow-left"></span></a>
+      Submit your artwork
+    </h2>
     <?php 
       if($error!==""){
         echo "<div class='alert alert-warning'>
