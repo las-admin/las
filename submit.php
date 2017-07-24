@@ -49,13 +49,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   }
   else{ 
     //post to the database
-    $strike=getstrike($_POST["name"])+1;
-    $sql = "INSERT INTO {$tablename} (username, imagesource, tags, day, strike)
-    VALUES ('{$_POST["name"]}', '{$_POST["image"]}', '{$_POST["tags"]}', NOW(), '{$strike}')";
-    if ($conn->query($sql) === TRUE) {
-      //redirect
+    $user=htmlspecialchars($_POST["name"]);
+    $image=htmlspecialchars($_POST["image"]);
+    $tags=htmlspecialchars($_POST["tags"]);
+
+    $user=$conn->real_escape_string($user);
+    $image=$conn->real_escape_string($image);
+    $tags=$conn->real_escape_string($tags);
+    $strike=getstrike($user)+1;
+
+    $stmt = $conn->prepare("INSERT INTO {$tablename} (username, imagesource, tags, day, strike) VALUES (?, ?, ?, ?, ?)");
+    $stmt->bind_param("sssss", $user, $image, $tags, $today, $strike);
+    $stmt->execute();
+    if ($stmt->execute() === true) {
       echo "<script>window.location.replace('{$base_url}gallery.php');</script>";
-      //redirect
     } else {
       echo "Error: " . $sql . "<br>" . $conn->error;
     }
