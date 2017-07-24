@@ -12,13 +12,59 @@
   </style>
 </head>
 <body>
+<?php
+$error="";//message displayed above the form to signal incorrect input.
+
+//connection
+require "variables.php";
+$conn = new mysqli($servername, $username, $password, $dbname);
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+//connection
+
+//post
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+  //incorrect input handling
+  if($_POST["name"]==="" || $_POST["image"]===""){
+    if($_POST["name"]===""){
+      $error.= "<br>You forgot the user name.";
+    }
+    if($_POST["image"]===""){
+      $error.= "<br>You forgot the image link.";
+    }
+    //incorrect input handling
+  }
+  else{ 
+    //post to the database
+    $sql = "INSERT INTO {$tablename} (username, imagesource, tags, day, strike)
+    VALUES ('{$_POST["name"]}', '{$_POST["image"]}', '{$_POST["tags"]}', NOW(), '1')";
+    if ($conn->query($sql) === TRUE) {
+      //redirect
+      echo "<script>window.location.replace('{$base_url}gallery.php');</script>";
+      //redirect
+    } else {
+      echo "Error: " . $sql . "<br>" . $conn->error;
+    }
+    //post to the database
+  }
+}
+//post
+?>
 <div class="panel panel-default col-sm-3">
 <div class="panel-body">
 <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="post">
     <h2>Submit your artwork</h2>
+    <?php 
+      if($error!==""){
+        echo "<div class='alert alert-warning'>
+        <strong>Incorrect input:</strong>{$error}
+        </div>";
+      }
+    ?>
     Name: <input type="text" name="name"><br>
-    Image Link: <input type="text" name="name"><br>
-    Tags: <input type="text" name="name"><br>
+    Image Link: <input type="text" name="image"><br>
+    Tags: <input type="text" name="tags"><br>
     <p class="small">*Your image link should end with image file extension, like ".jpeg" or ".png". 
     First upload it somewhere (tumblr, imgur, mixtape.moe), then right click on your image and select "Copy image adress".</p>
     <br>
@@ -26,26 +72,5 @@
 </form>
 </div>
 </div>
-<?php
-
-//connection
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "las";
-/*$conn = new mysqli($servername, $username, $password, $dbname);
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}*/
-//connection
-
-//post message
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-$base_url="http://".$_SERVER['SERVER_NAME'].dirname($_SERVER["REQUEST_URI"].'?').'/';
-  echo "<script>window.location.replace('".$base_url."gallery.php');</script>";
-}
-//post message
-?>
-
 </body>
 </html>
