@@ -8,4 +8,4 @@ The current hosting uses php with mysql database, so you can only use these for 
 
 Contact me in Last Artist Standing thread on /ic/ or using Last Artist Standing discord if you want to get access to server administration tools and other resources.
 
-## Uploading images works!
+## Submitting images works!
