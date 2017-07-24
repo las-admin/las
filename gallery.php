@@ -25,14 +25,18 @@ Submissions
 
 <?php
 
+require"days.php";
+
 //stylised containers
 $containerstart = ' <div class="container-fluid">';
 $rowstart='  <div class="panel-body row" style="width:100%">';
-function imagebox($username, $imagesource, $tags) {
+function imagebox($username, $imagesource, $tags, $streak) {
 	return "    <div class='col-sm-4'>
       <div class='panel panel-default'>
-        <div class='panel-heading'><h3 class='panel-title'>{$username}</h3></div>
-        <img src='{$imagesource}' class='img-responsive' style='width:100%' alt='{$imagesource}'>
+        <div class='panel-heading'><h4 class='panel-title'><b>{$username}</b> - x{$streak} streak</h4></div>
+        <a href='{$imagesource}'  target='_blank'>
+       	<img src='{$imagesource}' class='img-responsive' style='width:100%; min-height: 150px;' alt='{$imagesource}'>
+       	</a>
         <div class='panel-footer'>{$tags}</div>
       </div>
     </div>";
@@ -46,7 +50,7 @@ if ($conn->connect_error) {
 }
 //connection
 
-$sql = "SELECT username, imagesource, tags, day, strike FROM {$tablename}";
+$sql = "SELECT username, imagesource, tags, day, strike FROM {$tablename} WHERE day='".date("Y-m-d")."'";
 $result = $conn->query($sql);
 
 echo "<div class='panel panel-default'>
@@ -57,7 +61,7 @@ if ($result->num_rows > 0) {
 	$i=0;
 	echo $rowstart;
     while($row = $result->fetch_assoc()) {
-        echo imagebox($row["username"], $row["imagesource"], $row["tags"]);
+        echo imagebox($row["username"], $row["imagesource"], $row["tags"], $row["strike"]);
         $i++;
         if($i%3==0 && $i!=$result->num_rows){
         	//close the previous row and start a new one.

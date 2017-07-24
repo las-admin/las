@@ -17,11 +17,23 @@ $error="";//message displayed above the form to signal incorrect input.
 
 //connection
 require "variables.php";
+require "days.php";
 $conn = new mysqli($servername, $username, $password, $dbname);
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 //connection
+
+function getstrike($username){
+  global $tablename, $previousday, $conn;
+  $sql = "SELECT strike FROM {$tablename} WHERE username='{$username}' AND day='{$previousday}'";
+  $result = $conn->query($sql);
+  if ($result->num_rows > 0) {
+    return $result->fetch_assoc()["strike"];
+  } else {
+    return 0;
+  }
+}
 
 //post
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -37,8 +49,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   }
   else{ 
     //post to the database
+    $strike=getstrike($_POST["name"])+1;
     $sql = "INSERT INTO {$tablename} (username, imagesource, tags, day, strike)
-    VALUES ('{$_POST["name"]}', '{$_POST["image"]}', '{$_POST["tags"]}', NOW(), '1')";
+    VALUES ('{$_POST["name"]}', '{$_POST["image"]}', '{$_POST["tags"]}', NOW(), '{$strike}')";
     if ($conn->query($sql) === TRUE) {
       //redirect
       echo "<script>window.location.replace('{$base_url}gallery.php');</script>";
