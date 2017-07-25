@@ -49,6 +49,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   }
   else{ 
     //post to the database
+
+    //getting posted values
     $user=htmlspecialchars($_POST["name"]);
     $image=htmlspecialchars($_POST["image"]);
     $tags=htmlspecialchars($_POST["tags"]);
@@ -57,10 +59,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $image=$conn->real_escape_string($image);
     $tags=$conn->real_escape_string($tags);
     $strike=getstrike($user)+1;
+    //getting posted values
 
     $stmt = $conn->prepare("INSERT INTO {$tablename} (username, imagesource, tags, day, strike) VALUES (?, ?, ?, ?, ?)");
     $stmt->bind_param("sssss", $user, $image, $tags, $today, $strike);
-    $stmt->execute();
     if ($stmt->execute() === true) {
       echo "<script>window.location.replace('{$base_url}gallery.php');</script>";
     } else {

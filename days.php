@@ -18,6 +18,7 @@ if ($result->num_rows > 0) {
 		array_push($days, $row["day"]);
 	}
 }
+sort($days);
 //days array
 
 $today=date("Y-m-d");
@@ -26,10 +27,9 @@ $todayindex=array_search($today, $days);
 //Previous day means that it isn't necessarily yesterday,
 //it is the last day somebody have posted.
 //It is just easier to make than calculating a calendar.
-if(count($days)>1){
+if($todayindex>0 && in_array($today, $days)){
 	$previousday=$days[$todayindex-1];
 } else {
-	$previousday=$today;//There are only posts from today
+	$previousday=$days[count($days)-1];//There are only posts from today
 }
-
 ?>

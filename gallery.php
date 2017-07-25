@@ -50,32 +50,33 @@ if ($conn->connect_error) {
 }
 //connection
 
-$sql = "SELECT username, imagesource, tags, day, strike FROM {$tablename} WHERE day='".date("Y-m-d")."'";
-$result = $conn->query($sql);
+foreach (array_reverse($days) as &$d) {
+	$sql = "SELECT username, imagesource, tags, day, strike FROM {$tablename} WHERE day='".$d."'";
+	$result = $conn->query($sql);
 
-echo "<div class='panel panel-default'>
-<div class='panel-heading'><h3 class='panel-title'>".date("Y/m/d")."</h3></div>
-";
-echo $containerstart;
-if ($result->num_rows > 0) {
-	$i=0;
-	echo $rowstart;
-    while($row = $result->fetch_assoc()) {
-        echo imagebox($row["username"], $row["imagesource"], $row["tags"], $row["strike"]);
-        $i++;
-        if($i%3==0 && $i!=$result->num_rows){
-        	//close the previous row and start a new one.
-        	echo '</div>';
-        	echo $rowstart;
-        }
-    }
-    echo '</div>';
-} else {
-    echo "No images yet.";
+	echo "<div class='panel panel-default'>
+	<div class='panel-heading'><h3 class='panel-title'>".$d."</h3></div>
+	";
+	echo $containerstart;
+	if ($result->num_rows > 0) {
+		$i=0;
+		echo $rowstart;
+	    while($row = $result->fetch_assoc()) {
+	        echo imagebox($row["username"], $row["imagesource"], $row["tags"], $row["strike"]);
+	        $i++;
+	        if($i%3==0 && $i!=$result->num_rows){
+	        	//close the previous row and start a new one.
+	        	echo '</div>';
+	        	echo $rowstart;
+	        }
+	    }
+	    echo '</div>';
+	} else {
+	    echo "No images yet.";
+	}
+	echo '</div>';
+	echo '</div>';
 }
-echo '</div>';
-echo '</div>';
-
 ?>
 
 </body>
