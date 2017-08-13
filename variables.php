@@ -9,5 +9,7 @@ $username = "root";
 $password = "";
 $dbname = "las";
 $tablename = "las";
+$commentstable = "comments";
+$captchaKey = "";
 //mysql database
 ?>

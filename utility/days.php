@@ -1,6 +1,6 @@
 <?php
 
-require "variables.php";
+require_once "variables.php";
 
 //connection
 $conn = new mysqli($servername, $username, $password, $dbname);
@@ -18,7 +18,7 @@ if ($result->num_rows > 0) {
 		array_push($days, $row["day"]);
 	}
 }
-sort($days);
+rsort($days);
 //days array
 
 $today=date("Y-m-d");
@@ -27,9 +27,13 @@ $todayindex=array_search($today, $days);
 //Previous day means that it isn't necessarily yesterday,
 //it is the last day somebody have posted.
 //It is just easier to make than calculating a calendar.
-if($todayindex>0 && in_array($today, $days)){
-	$previousday=$days[$todayindex-1];
+if(in_array($today, $days)){
+	$previousday=$days[$todayindex+1];
 } else {
-	$previousday=$days[count($days)-1];//There are only posts from today
+	$previousday=$days[0];//There are only posts from today
+}
+
+function in_range($index, $array){
+	return $index>=0 && $index<count($array);
 }
 ?>
